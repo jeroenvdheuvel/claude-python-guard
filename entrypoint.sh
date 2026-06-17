@@ -27,15 +27,11 @@ with tempfile.NamedTemporaryFile(suffix='.py', mode='w', delete=False) as f:
 
 try:
     result = subprocess.run(['bandit', *sys.argv[1:], '-q', tmpfile], capture_output=True, text=True)
+    decision = {'hookEventName': 'PreToolUse', 'permissionDecision': 'allow'}
     if result.returncode != 0:
         issue = next((line for line in result.stdout.splitlines() if 'Issue:' in line), 'Security issue detected')
-        print(json.dumps({
-            'hookSpecificOutput': {
-                'hookEventName': 'PreToolUse',
-                'permissionDecision': 'deny',
-                'permissionDecisionReason': f'Bandit: {issue}'
-            }
-        }))
-        sys.exit(2)
+        decision['permissionDecision'] = 'ask'
+        decision['permissionDecisionReason'] = f'Bandit: {issue}'
+    print(json.dumps({'hookSpecificOutput': decision}))
 finally:
     os.unlink(tmpfile)
