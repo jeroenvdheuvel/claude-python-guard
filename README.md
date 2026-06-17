@@ -16,10 +16,16 @@ Claude Code can run arbitrary `python -c` commands. While Claude's auto-mode cla
 
 ## Setup
 
-### 1. Build the Docker image
+### 1. Pull the Docker image
 
 ```bash
-docker build -t claude-python-guard .
+docker pull ghcr.io/jeroenvdheuvel/claude-python-guard:latest
+```
+
+To pin to a specific release, use a tag instead:
+
+```bash
+docker pull ghcr.io/jeroenvdheuvel/claude-python-guard:0.1.0
 ```
 
 ### 2. Configure the Claude Code hook
@@ -32,7 +38,7 @@ Add the following to your `~/.claude/settings.json` inside the `hooks.PreToolUse
   "hooks": [
     {
       "type": "command",
-      "command": "docker run --rm -i claude-python-guard --severity-level medium --confidence-level medium",
+      "command": "docker run --rm -i ghcr.io/jeroenvdheuvel/claude-python-guard:latest --severity-level medium --confidence-level medium",
       "if": "Bash(python*)",
       "timeout": 10
     }
@@ -55,22 +61,30 @@ Since the hook acts as the security gate, add Python commands to the `permission
 }
 ```
 
+### Building locally (optional)
+
+Only needed if you want to modify the hook or test changes before publishing:
+
+```bash
+docker build -t claude-python-guard .
+```
+
 ## Customising severity and confidence
 
 Pass Bandit arguments directly in the `docker run` command:
 
 ```bash
 # MEDIUM severity + MEDIUM confidence (default)
-docker run --rm -i claude-python-guard --severity-level medium --confidence-level medium
+docker run --rm -i ghcr.io/jeroenvdheuvel/claude-python-guard:latest --severity-level medium --confidence-level medium
 
 # HIGH severity only (more permissive)
-docker run --rm -i claude-python-guard --severity-level high --confidence-level high
+docker run --rm -i ghcr.io/jeroenvdheuvel/claude-python-guard:latest --severity-level high --confidence-level high
 
 # Restrict to specific test IDs
-docker run --rm -i claude-python-guard --severity-level medium -t B301,B302,B307
+docker run --rm -i ghcr.io/jeroenvdheuvel/claude-python-guard:latest --severity-level medium -t B301,B302,B307
 ```
 
-See `docker run --rm --entrypoint bandit claude-python-guard --list` for all available test IDs.
+See `docker run --rm --entrypoint bandit ghcr.io/jeroenvdheuvel/claude-python-guard:latest --list` for all available test IDs.
 
 ## What gets blocked (at medium/medium)
 
