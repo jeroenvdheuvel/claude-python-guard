@@ -9,7 +9,7 @@ on:
   pull_request:
 
 jobs:
-  build-test-push:
+  test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
