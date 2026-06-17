@@ -1,4 +1,4 @@
-# claude-bandit
+# Claude Python Guard
 
 A Claude Code PreToolUse hook that runs [Bandit](https://bandit.readthedocs.io/) static analysis on any `python -c` command before it executes, blocking dangerous inline Python code automatically.
 
@@ -19,7 +19,7 @@ Claude Code can run arbitrary `python -c` commands. While Claude's auto-mode cla
 ### 1. Build the Docker image
 
 ```bash
-docker build -t claude-bandit .
+docker build -t claude-python-guard .
 ```
 
 ### 2. Configure the Claude Code hook
@@ -32,7 +32,7 @@ Add the following to your `~/.claude/settings.json` inside the `hooks.PreToolUse
   "hooks": [
     {
       "type": "command",
-      "command": "docker run --rm -i claude-bandit --severity-level medium --confidence-level medium",
+      "command": "docker run --rm -i claude-python-guard --severity-level medium --confidence-level medium",
       "if": "Bash(python*)",
       "timeout": 10
     }
@@ -61,16 +61,16 @@ Pass Bandit arguments directly in the `docker run` command:
 
 ```bash
 # MEDIUM severity + MEDIUM confidence (default)
-docker run --rm -i claude-bandit --severity-level medium --confidence-level medium
+docker run --rm -i claude-python-guard --severity-level medium --confidence-level medium
 
 # HIGH severity only (more permissive)
-docker run --rm -i claude-bandit --severity-level high --confidence-level high
+docker run --rm -i claude-python-guard --severity-level high --confidence-level high
 
 # Restrict to specific test IDs
-docker run --rm -i claude-bandit --severity-level medium -t B301,B302,B307
+docker run --rm -i claude-python-guard --severity-level medium -t B301,B302,B307
 ```
 
-See `docker run --rm --entrypoint bandit claude-bandit --list` for all available test IDs.
+See `docker run --rm --entrypoint bandit claude-python-guard --list` for all available test IDs.
 
 ## What gets blocked (at medium/medium)
 
