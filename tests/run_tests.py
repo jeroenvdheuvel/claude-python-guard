@@ -35,18 +35,26 @@ for name, code, expect_blocked in TESTS:
         capture_output=True,
         text=True,
     )
-    blocked = result.returncode == 2
 
-    if blocked == expect_blocked:
-        label = "blocked" if blocked else "allowed"
-        print(f"PASS [{label:7}] {name}")
+    try:
+        output = json.loads(result.stdout)
+        decision = output.get("hookSpecificOutput", {}).get("permissionDecision", "")
+    except (json.JSONDecodeError, AttributeError):
+        decision = ""
+
+    blocked = decision == "ask"
+    allowed = decision == "allow"
+
+    if blocked == expect_blocked and (blocked or allowed):
+        label = "ask  " if blocked else "allow"
+        print(f"PASS [{label}] {name}")
         passed += 1
     else:
-        expected = "blocked" if expect_blocked else "allowed"
-        got = f"blocked (exit {result.returncode})" if not expect_blocked else f"allowed (exit {result.returncode})"
-        print(f"FAIL [{expected:7} expected, got {got}] {name}")
-        if result.stdout:
-            print(f"       stdout: {result.stdout.strip()}")
+        expected = "ask  " if expect_blocked else "allow"
+        got = f"ask" if blocked else f"allow" if allowed else f"unknown (decision={decision!r})"
+        print(f"FAIL [{expected} expected, got {got}] {name}")
+        if result.stderr:
+            print(f"       stderr: {result.stderr.strip()}")
         failed += 1
 
 print(f"\n{passed} passed, {failed} failed")

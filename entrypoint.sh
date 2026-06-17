@@ -32,10 +32,16 @@ try:
         print(json.dumps({
             'hookSpecificOutput': {
                 'hookEventName': 'PreToolUse',
-                'permissionDecision': 'deny',
+                'permissionDecision': 'ask',
                 'permissionDecisionReason': f'Bandit: {issue}'
             }
         }))
-        sys.exit(2)
+    else:
+        print(json.dumps({
+            'hookSpecificOutput': {
+                'hookEventName': 'PreToolUse',
+                'permissionDecision': 'allow'
+            }
+        }))
 finally:
     os.unlink(tmpfile)
