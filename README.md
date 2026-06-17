@@ -1,6 +1,6 @@
 # Claude Python Guard
 
-A Claude Code PreToolUse hook that runs [Bandit](https://bandit.readthedocs.io/) static analysis on any `python -c` command before it executes, blocking dangerous inline Python code automatically.
+A Claude Code PreToolUse hook that runs [Bandit](https://bandit.readthedocs.io/) static analysis on any `python -c` command before it executes. Safe commands run without interruption; commands with security findings prompt you to allow or deny before anything executes.
 
 ## Why
 
@@ -12,7 +12,16 @@ Claude Code can run arbitrary `python -c` commands. While Claude's auto-mode cla
 2. The full command is piped into the Docker container
 3. The entrypoint extracts the `-c` argument using Python's `shlex` for correct quote handling
 4. Bandit runs static analysis on the extracted code
-5. If Bandit finds issues at or above the configured severity/confidence threshold, the hook returns a `deny` decision and Claude's command is blocked
+5. **No issues found** → the hook returns `allow` and the command runs silently
+6. **Issues found** → the hook returns `ask` with the Bandit finding as the reason, and Claude Code pauses to show you a prompt:
+
+```
+Bandit: >> Issue: [B307:blacklist] Use of possibly insecure function - consider using safer ast.literal_eval.
+
+Allow this command to run?  [Allow] [Deny]
+```
+
+You decide whether to proceed. Denying prevents the command from running; allowing lets it through for that invocation only.
 
 ## Setup
 
@@ -86,7 +95,7 @@ docker run --rm -i ghcr.io/jeroenvdheuvel/claude-python-guard:latest --severity-
 
 See `docker run --rm --entrypoint bandit ghcr.io/jeroenvdheuvel/claude-python-guard:latest --list` for all available test IDs.
 
-## What gets blocked (at medium/medium)
+## What triggers a prompt (at medium/medium)
 
 | Test ID | Pattern |
 |---------|---------|
