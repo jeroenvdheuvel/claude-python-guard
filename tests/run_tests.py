@@ -18,7 +18,7 @@ TESTS = [
     # Safe — should be allowed
     ("json.loads()",               "import json; json.loads('{\"a\": 1}')",               False),
     ("list comprehension",         "x = [i for i in range(10)]",                          False),
-    ("os.path.join()",             "import os; os.path.join('/tmp', 'test')",             False),
+    ("os.path.join()",             "import os; os.path.join('/usr', 'local')",            False),
     ("datetime.now()",             "from datetime import datetime; datetime.now()",        False),
     ("regex match",                "import re; re.match(r'\\d+', '123')",                 False),
     ("collections.Counter()",      "from collections import Counter; Counter([1,2,3])",   False),
