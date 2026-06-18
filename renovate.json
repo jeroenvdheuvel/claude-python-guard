@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":preserveSemverRanges"
+  ],
+  "prConcurrentLimit": 15,
+  "labels": [
+    "upgrade",
+    "bot"
+  ],
+  "timezone": "Europe/Amsterdam"
+}
