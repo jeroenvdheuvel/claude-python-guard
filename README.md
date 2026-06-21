@@ -55,21 +55,6 @@ Add the following to your `~/.claude/settings.json` inside the `hooks.PreToolUse
 }
 ```
 
-### 3. Add Python to the Claude allow list
-
-Since the hook acts as the security gate, add Python commands to the `permissions.allow` list so Claude doesn't prompt for permission on every invocation:
-
-```json
-{
-  "permissions": {
-    "allow": [
-      "Bash(python *)",
-      "Bash(python3 *)"
-    ]
-  }
-}
-```
-
 ### Building locally (optional)
 
 Only needed if you want to modify the hook or test changes before publishing:
